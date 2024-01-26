@@ -7,6 +7,7 @@ todos = [
     { "label": "My first task", "done": False }
 ]
 
+
 @app.route('/todos', methods=['GET'])
 def hello_world():
     json_text = jsonify(todos)
@@ -15,10 +16,24 @@ def hello_world():
 @app.route('/todos', methods=['POST'])
 def add_new_todo():
     request_body = request.json
-    print("Incoming request with the following body", request_body)
-    return 'Response for the POST todo'
+    new_todo = {
+       "done": request_body["done"], 
+       "label": request_body["label"]
+    }
+    todos.append(new_todo)
+    response_body = {
+       "new_todo" : new_todo
+    }
+    return jsonify(response_body), 200
 
-
+@app.route('/todos/<int:position>', methods=['DELETE'])
+def delete_todo(position):
+    # Eliminamos el todo en la posicion dada
+    del todos[position]
+    response_body = {
+    "done": True
+    }
+    return jsonify(response_body), 200
 
 
 if __name__ == '__main__':
